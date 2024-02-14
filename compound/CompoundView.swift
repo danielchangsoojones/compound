@@ -14,6 +14,8 @@ class CompoundView: UIView {
     
     var containerView: UIView!
     var assetViews: [ExpandableView] = []
+    private let assetLabel = UILabel()
+    private let supplyLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,6 +42,21 @@ class CompoundView: UIView {
             containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
             heightConstraint!
         ])
+        setLabels()
+    }
+    
+    private func setLabels() {
+        assetLabel.translatesAutoresizingMaskIntoConstraints = false
+        assetLabel.text = "Asset"
+        let font = FontManager.shared.font(forStyle: .regular, size: 13)
+        assetLabel.font = font
+        
+        containerView.addSubview(assetLabel)
+        NSLayoutConstraint.activate([
+            assetLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            assetLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
+        ])
+        
     }
     
     func add(_ assets: [Asset]) {
@@ -72,7 +89,7 @@ class CompoundView: UIView {
             }
             
             
-            var topAnchor = expandableView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
+            var topAnchor = expandableView.topAnchor.constraint(equalTo: assetLabel.topAnchor, constant: 20)
             if index > 0 {
                 let aboveView = assetViews[index - 1]
                 topAnchor = expandableView.topAnchor.constraint(equalTo: aboveView.bottomAnchor)
@@ -93,7 +110,6 @@ class CompoundView: UIView {
             view.isExpanded.toggle()
             view.heightConstraint?.constant = view.isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
             heightConstraint?.constant = view.isExpanded ? CompoundView.finalHeight : CompoundView.initialHeight
-            
             
             UIView.animate(withDuration: 0.3) {
                 self.superview?.layoutIfNeeded() // Animates the height change
