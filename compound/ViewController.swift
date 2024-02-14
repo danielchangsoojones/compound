@@ -8,6 +8,14 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    
+    override func loadView() {
+        super.loadView()
+        let compoundView = CompoundView(frame: self.view.frame)
+        self.view = compoundView
+        
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
