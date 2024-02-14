@@ -57,6 +57,16 @@ class CompoundView: UIView {
             assetLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
         ])
         
+        supplyLabel.translatesAutoresizingMaskIntoConstraints = false
+        supplyLabel.text = "Total Supply"
+        assetLabel.font = FontManager.shared.font(forStyle: .regular, size: 10)
+        
+        containerView.addSubview(supplyLabel)
+        NSLayoutConstraint.activate([
+            supplyLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+            supplyLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
+        ])
+        
     }
     
     func add(_ assets: [Asset]) {
@@ -97,8 +107,8 @@ class CompoundView: UIView {
             expandableView.heightConstraint = expandableView.heightAnchor.constraint(equalToConstant: ExpandableView.initialHeight)
             
             NSLayoutConstraint.activate([
-                expandableView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor),
-                expandableView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor),
+                expandableView.leadingAnchor.constraint(equalTo: self.assetLabel.leadingAnchor),
+                expandableView.trailingAnchor.constraint(equalTo: self.supplyLabel.trailingAnchor),
                 topAnchor,
                 expandableView.heightConstraint!
             ])
