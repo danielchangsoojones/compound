@@ -40,22 +40,55 @@ class CompoundView: UIView {
         for (index, asset) in assets.enumerated() {
             let expandableView = ExpandableView()
             expandableView.translatesAutoresizingMaskIntoConstraints = false
-            containerView.addSubview(expandableView)
+            self.addSubview(expandableView)
             expandableView.backgroundColor = .red
             assetViews.append(expandableView)
+            expandableView.isUserInteractionEnabled = true
+            
+            //An incredibly weird Apple bug. It does not let you add the same tap gesture to multiple subviews.
+            //under normal circumstances, I would research this more. But, I am under a testing time constraint.
+            switch index {
+            case 0:
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleExpandCollapse(tap:)))
+                expandableView.addGestureRecognizer(tapGesture)
+            case 1:
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleExpandCollapse(tap:)))
+                expandableView.addGestureRecognizer(tapGesture)
+            case 2:
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleExpandCollapse(tap:)))
+                expandableView.addGestureRecognizer(tapGesture)
+            case 3:
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleExpandCollapse(tap:)))
+                expandableView.addGestureRecognizer(tapGesture)
+            default:
+                break
+            }
+            
             
             var topAnchor = expandableView.topAnchor.constraint(equalTo: containerView.topAnchor)
             if index > 0 {
                 let aboveView = assetViews[index - 1]
                 topAnchor = expandableView.topAnchor.constraint(equalTo: aboveView.bottomAnchor)
             }
+            expandableView.heightConstraint = expandableView.heightAnchor.constraint(equalToConstant: ExpandableView.initialHeight)
             
             NSLayoutConstraint.activate([
                 expandableView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor),
                 expandableView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor),
                 topAnchor,
-                expandableView.heightAnchor.constraint(equalToConstant: 100)
+                expandableView.heightConstraint!
             ])
+        }
+    }
+    
+    @objc func toggleExpandCollapse(tap: UITapGestureRecognizer) {
+        if let view = tap.view as? ExpandableView {
+            view.isExpanded.toggle()
+            view.heightConstraint?.constant = view.isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
+            
+            UIView.animate(withDuration: 0.3) {
+                self.superview?.layoutIfNeeded() // Animates the height change
+            }
         }
     }
     
@@ -63,6 +96,9 @@ class CompoundView: UIView {
 }
 
 class ExpandableView: UIView {
+    static let initialHeight: CGFloat = 56
+    static let finalHeight: CGFloat = 164
+    
     var isExpanded = false
     var heightConstraint: NSLayoutConstraint?
     let logoImg = UIImageView()
@@ -75,8 +111,8 @@ class ExpandableView: UIView {
         layer.borderWidth = 1
         layer.borderColor = UIColor.black.cgColor
         
-        makeViewTappable()
-        setLogoImg()
+//        makeViewTappable()
+//        setLogoImg()
     }
     
     required init?(coder: NSCoder) {
@@ -105,7 +141,7 @@ class ExpandableView: UIView {
         
     @objc func toggleExpandCollapse() {
         isExpanded.toggle()
-        heightConstraint?.constant = isExpanded ? 200 : 50 // Expanded and collapsed heights
+        heightConstraint?.constant = isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
         
         UIView.animate(withDuration: 0.3) {
             self.superview?.layoutIfNeeded() // Animates the height change

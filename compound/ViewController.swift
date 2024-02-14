@@ -50,7 +50,7 @@ class ViewController: UIViewController {
             // always update the UI from the main thread
             DispatchQueue.main.async() { [weak self] in
                 if let compoundView = self?.view as? CompoundView {
-                    compoundView.assetViews[index].logoImg.image = UIImage(data: data)
+//                    compoundView.assetViews[index].logoImg.image = UIImage(data: data)
                 }
             }
         }
