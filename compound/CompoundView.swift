@@ -8,6 +8,10 @@
 import UIKit
 
 class CompoundView: UIView {
+    static let initialHeight = ExpandableView.initialHeight * 4 + 50
+    static let finalHeight = ExpandableView.initialHeight * 3 + ExpandableView.finalHeight + 50
+    private var heightConstraint: NSLayoutConstraint?
+    
     var containerView: UIView!
     var assetViews: [ExpandableView] = []
     
@@ -29,12 +33,12 @@ class CompoundView: UIView {
         
         self.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        let heightAnchor = containerView.heightAnchor.constraint(equalToConstant: ExpandableView.initialHeight * 4)
+        heightConstraint = containerView.heightAnchor.constraint(equalToConstant: CompoundView.initialHeight)
         NSLayoutConstraint.activate([
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
-            heightAnchor
+            heightConstraint!
         ])
     }
     
@@ -68,7 +72,7 @@ class CompoundView: UIView {
             }
             
             
-            var topAnchor = expandableView.topAnchor.constraint(equalTo: containerView.topAnchor)
+            var topAnchor = expandableView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
             if index > 0 {
                 let aboveView = assetViews[index - 1]
                 topAnchor = expandableView.topAnchor.constraint(equalTo: aboveView.bottomAnchor)
@@ -88,6 +92,8 @@ class CompoundView: UIView {
         if let view = tap.view as? ExpandableView {
             view.isExpanded.toggle()
             view.heightConstraint?.constant = view.isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
+            heightConstraint?.constant = CompoundView.finalHeight
+            
             
             UIView.animate(withDuration: 0.3) {
                 self.superview?.layoutIfNeeded() // Animates the height change
@@ -151,14 +157,3 @@ class ExpandableView: UIView {
         }
     }
 }
-
-//
-//self.addSubview(containerView)
-//containerView.translatesAutoresizingMaskIntoConstraints = false
-//containerView.heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 100)
-//NSLayoutConstraint.activate([
-//    containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-//    containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-//    containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
-//    containerView.heightConstraint!
-//])
