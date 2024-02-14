@@ -29,10 +29,12 @@ class CompoundView: UIView {
         
         self.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        let heightAnchor = containerView.heightAnchor.constraint(equalToConstant: ExpandableView.initialHeight * 4)
         NSLayoutConstraint.activate([
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60)
+            containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
+            heightAnchor
         ])
     }
     
@@ -40,7 +42,8 @@ class CompoundView: UIView {
         for (index, asset) in assets.enumerated() {
             let expandableView = ExpandableView()
             expandableView.translatesAutoresizingMaskIntoConstraints = false
-            self.addSubview(expandableView)
+            containerView.addSubview(expandableView)
+            containerView.backgroundColor = .blue
             expandableView.backgroundColor = .red
             assetViews.append(expandableView)
             expandableView.isUserInteractionEnabled = true
