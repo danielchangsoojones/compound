@@ -48,6 +48,7 @@ class CompoundView: UIView {
     private func setLabels() {
         assetLabel.translatesAutoresizingMaskIntoConstraints = false
         assetLabel.text = "Asset"
+        assetLabel.textColor = ColorHelper.color(fromHex: "#7A8A99")
         let font = FontManager.shared.font(forStyle: .regular, size: 13)
         assetLabel.font = font
         
@@ -60,6 +61,7 @@ class CompoundView: UIView {
         supplyLabel.translatesAutoresizingMaskIntoConstraints = false
         supplyLabel.text = "Total Supply"
         assetLabel.font = FontManager.shared.font(forStyle: .regular, size: 10)
+        supplyLabel.textColor = ColorHelper.color(fromHex: "#7A8A99")
         
         containerView.addSubview(supplyLabel)
         NSLayoutConstraint.activate([
@@ -74,13 +76,14 @@ class CompoundView: UIView {
             let expandableView = ExpandableView()
             expandableView.translatesAutoresizingMaskIntoConstraints = false
             containerView.addSubview(expandableView)
-            containerView.backgroundColor = .blue
-            expandableView.backgroundColor = .red
+            expandableView.backgroundColor = ColorHelper.color(fromHex: "#19232E")
             assetViews.append(expandableView)
             expandableView.isUserInteractionEnabled = true
             
             expandableView.nameLabel.text = asset.name
             expandableView.tickerLbl.text = asset.symbol
+            expandableView.supplyLbl.text = String(asset.total_supply)
+            expandableView.priceNumLabel.text = String(asset.price)
             
             //An incredibly weird Apple bug. It does not let you add the same tap gesture to multiple subviews.
             //under normal circumstances, I would research this more. But, I am under a testing time constraint.
@@ -121,13 +124,22 @@ class CompoundView: UIView {
     @objc func toggleExpandCollapse(tap: UITapGestureRecognizer) {
         if let view = tap.view as? ExpandableView {
             view.isExpanded.toggle()
+            addHapticFeedback()
             view.heightConstraint?.constant = view.isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
             heightConstraint?.constant = view.isExpanded ? CompoundView.finalHeight : CompoundView.initialHeight
+            
+            view.priceLabel.isHidden = !view.isExpanded
+            view.priceNumLabel.isHidden = !view.isExpanded
             
             UIView.animate(withDuration: 0.3) {
                 self.superview?.layoutIfNeeded() // Animates the height change
             }
         }
+    }
+    
+    private func addHapticFeedback() {
+        let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        impactFeedbackGenerator.impactOccurred()
     }
     
     
@@ -144,6 +156,7 @@ class ExpandableView: UIView {
     let tickerLbl = UILabel()
     let supplyLbl = UILabel()
     let priceLabel = UILabel()
+    let priceNumLabel = UILabel()
     let collateralLabel = UILabel()
     let liquidationLabel = UILabel()
     let bottomStackView = UIStackView()
@@ -177,17 +190,47 @@ class ExpandableView: UIView {
     
     private func setLabels() {
         self.addSubview(nameLabel)
+        nameLabel.textColor = .white
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             nameLabel.leadingAnchor.constraint(equalTo: logoImg.trailingAnchor, constant: 12),
             nameLabel.topAnchor.constraint(equalTo: logoImg.topAnchor)
         ])
         
+        let inverseTextColor = ColorHelper.color(fromHex: "#7A8A99")
         self.addSubview(tickerLbl)
+        tickerLbl.textColor = inverseTextColor
         tickerLbl.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tickerLbl.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             tickerLbl.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
+        ])
+        
+        self.addSubview(supplyLbl)
+        supplyLbl.textColor = .white
+        supplyLbl.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            supplyLbl.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            supplyLbl.centerYAnchor.constraint(equalTo: logoImg.centerYAnchor)
+        ])
+        
+        addSubview(priceLabel)
+        priceLabel.textColor = inverseTextColor
+        priceLabel.isHidden = true
+        priceLabel.text = "Oracle Price"
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            priceLabel.leadingAnchor.constraint(equalTo: logoImg.leadingAnchor),
+            priceLabel.topAnchor.constraint(equalTo: logoImg.bottomAnchor, constant: 40)
+        ])
+        
+        addSubview(priceNumLabel)
+        priceNumLabel.textColor = .white
+        priceNumLabel.isHidden = true
+        priceNumLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            priceNumLabel.trailingAnchor.constraint(equalTo: supplyLbl.trailingAnchor),
+            priceNumLabel.firstBaselineAnchor.constraint(equalTo: priceLabel.firstBaselineAnchor)
         ])
     }
 }
