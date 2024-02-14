@@ -35,8 +35,6 @@ class CompoundView: UIView {
             containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
             containerView.heightConstraint!
         ])
-        
-        
     }
     
     
@@ -45,22 +43,34 @@ class CompoundView: UIView {
 class ExpandableView: UIView {
     var isExpanded = false
     var heightConstraint: NSLayoutConstraint?
+    let logoImg = UIImageView()
         
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            // Initial height constraint
-            //heightConstraint = heightAnchor.constraint(equalToConstant: 50) // Initial collapsed height
-            heightConstraint?.isActive = true
-            
-            layer.borderWidth = 1
-            layer.borderColor = UIColor.black.cgColor
-            
-            makeViewTappable()
-        }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        // Initial height constraint
+        heightConstraint?.isActive = true
         
-        required init?(coder: NSCoder) {
-            super.init(coder: coder)
-        }
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.black.cgColor
+        
+        makeViewTappable()
+        setLogoImg()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    private func setLogoImg() {
+        self.addSubview(logoImg)
+        logoImg.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            logoImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            logoImg.widthAnchor.constraint(equalToConstant: 40),
+            logoImg.heightAnchor.constraint(equalToConstant: 40),
+            logoImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
+        ])
+    }
     
     func makeViewTappable() {
         // Make sure the view can interact with the user
@@ -71,12 +81,12 @@ class ExpandableView: UIView {
         self.addGestureRecognizer(tapGesture)
     }
         
-        @objc func toggleExpandCollapse() {
-            isExpanded.toggle()
-            heightConstraint?.constant = isExpanded ? 200 : 50 // Expanded and collapsed heights
-            
-            UIView.animate(withDuration: 0.3) {
-                self.superview?.layoutIfNeeded() // Animates the height change
-            }
+    @objc func toggleExpandCollapse() {
+        isExpanded.toggle()
+        heightConstraint?.constant = isExpanded ? 200 : 50 // Expanded and collapsed heights
+        
+        UIView.animate(withDuration: 0.3) {
+            self.superview?.layoutIfNeeded() // Animates the height change
         }
+    }
 }
