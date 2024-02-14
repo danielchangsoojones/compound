@@ -92,7 +92,7 @@ class CompoundView: UIView {
         if let view = tap.view as? ExpandableView {
             view.isExpanded.toggle()
             view.heightConstraint?.constant = view.isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
-            heightConstraint?.constant = CompoundView.finalHeight
+            heightConstraint?.constant = view.isExpanded ? CompoundView.finalHeight : CompoundView.initialHeight
             
             
             UIView.animate(withDuration: 0.3) {
@@ -119,9 +119,6 @@ class ExpandableView: UIView {
         
         layer.borderWidth = 1
         layer.borderColor = UIColor.black.cgColor
-        
-//        makeViewTappable()
-//        setLogoImg()
     }
     
     required init?(coder: NSCoder) {
@@ -137,23 +134,5 @@ class ExpandableView: UIView {
             logoImg.heightAnchor.constraint(equalToConstant: 40),
             logoImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
         ])
-    }
-    
-    func makeViewTappable() {
-        // Make sure the view can interact with the user
-        self.isUserInteractionEnabled = true
-        
-        // Initialize the tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleExpandCollapse))
-        self.addGestureRecognizer(tapGesture)
-    }
-        
-    @objc func toggleExpandCollapse() {
-        isExpanded.toggle()
-        heightConstraint?.constant = isExpanded ? ExpandableView.finalHeight : ExpandableView.initialHeight // Expanded and collapsed heights
-        
-        UIView.animate(withDuration: 0.3) {
-            self.superview?.layoutIfNeeded() // Animates the height change
-        }
     }
 }
