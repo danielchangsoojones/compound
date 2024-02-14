@@ -79,6 +79,9 @@ class CompoundView: UIView {
             assetViews.append(expandableView)
             expandableView.isUserInteractionEnabled = true
             
+            expandableView.nameLabel.text = asset.name
+            expandableView.tickerLbl.text = asset.symbol
+            
             //An incredibly weird Apple bug. It does not let you add the same tap gesture to multiple subviews.
             //under normal circumstances, I would research this more. But, I am under a testing time constraint.
             switch index {
@@ -137,6 +140,13 @@ class ExpandableView: UIView {
     var isExpanded = false
     var heightConstraint: NSLayoutConstraint?
     let logoImg = UIImageView()
+    let nameLabel = UILabel()
+    let tickerLbl = UILabel()
+    let supplyLbl = UILabel()
+    let priceLabel = UILabel()
+    let collateralLabel = UILabel()
+    let liquidationLabel = UILabel()
+    let bottomStackView = UIStackView()
         
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -145,6 +155,9 @@ class ExpandableView: UIView {
         
         layer.borderWidth = 1
         layer.borderColor = UIColor.black.cgColor
+        
+        setLogoImg()
+        setLabels()
     }
     
     required init?(coder: NSCoder) {
@@ -159,6 +172,22 @@ class ExpandableView: UIView {
             logoImg.widthAnchor.constraint(equalToConstant: 40),
             logoImg.heightAnchor.constraint(equalToConstant: 40),
             logoImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
+        ])
+    }
+    
+    private func setLabels() {
+        self.addSubview(nameLabel)
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            nameLabel.leadingAnchor.constraint(equalTo: logoImg.trailingAnchor, constant: 12),
+            nameLabel.topAnchor.constraint(equalTo: logoImg.topAnchor)
+        ])
+        
+        self.addSubview(tickerLbl)
+        tickerLbl.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tickerLbl.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            tickerLbl.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
         ])
     }
 }
